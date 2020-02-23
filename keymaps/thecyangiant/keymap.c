@@ -1,8 +1,8 @@
 // Next Steps:
-//- Make code lighter with function definition for if(record->event.pressed) and tap timer.
 //- Hold behavior is triggering on release, would be nicer if it triggered when timer greater than defined time.
 //- Hold behavior on backspace: would be nice to have hold behavior continue to backspace until released.
 //- Figure out how to send the shifted event as a keypress and not a string.
+//- Make code lighter with function definition for if(record->event.pressed) and tap timer.
 // ISSUES:
 // - Rapid tap typing on 0 & 1 sometimes do not register, this is likely an artifact of tapping-term (set to 175 in config). How can this be resolved?  Moving from 250 to 175 reduced the lag a little, but going much lower will likely manifest in the same issue.  
 
