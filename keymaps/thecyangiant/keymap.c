@@ -1,20 +1,17 @@
-//Next Steps: 
-//- Make code lighter with function definition for if(record->event.pressed) and tap timer. 
+// Next Steps:
+//- Make code lighter with function definition for if(record->event.pressed) and tap timer.
 //- Hold behavior is triggering on release, would be nicer if it triggered when timer greater than defined time.
 //- Hold behavior on backspace: would be nice to have hold behavior continue to backspace until released.
+//- Figure out how to send the shifted event as a keypress and not a string.
+// ISSUES:
+// - Rapid tap typing on 0 & 1 sometimes do not register, this is likely an artifact of tapping-term (set to 175 in config). How can this be resolved?  Moving from 250 to 175 reduced the lag a little, but going much lower will likely manifest in the same issue.  
 
 #include QMK_KEYBOARD_H
 
-enum custom_keycodes {
-    SVN_OBRKT = SAFE_RANGE,
-    EGT_COLN,
-    NIN_CBRKT,
-    DEL_BSPC
-};
+enum custom_keycodes { SVN_OBRKT = SAFE_RANGE, EGT_COLN, NIN_CBRKT, DEL_BSPC };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static uint16_t tap_timer;
-
     /*if(record->event.pressed) {*/  // is there a way to make this universal for each of the below cases?
     /*tap_timer = timer_read(); */   // is there a way to make this universal for each of the below cases?
     switch (keycode) {
@@ -53,28 +50,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     SEND_STRING(")");  // if button held right paren
                     return false;
                 }
-            }   
-                break;
+            }
+            break;
         case DEL_BSPC:
             if (record->event.pressed) {
                 tap_timer = timer_read();
             } else {
-                if (timer_elapsed(tap_timer) > 250) { //changed to greater than and inverted press/hold to see if register/unregister of backspace will allow hold behavior of multiple backspaces.  This does NOT work to do multiple presses on hold.  need to research.  
+                if (timer_elapsed(tap_timer) > 250) {  // changed to greater than and inverted press/hold to see if register/unregister of backspace will allow hold behavior of multiple backspaces.  This does NOT work to do multiple presses on hold.  need to research.
                     register_code(KC_BSPC);
                     unregister_code(KC_BSPC);
-                    /*tap_code(KC_DEL);*/  //  used with timer less than. if button tapped select 9
-                } else {                   
+                } else {
                     tap_code(KC_DEL);
-                    /*tap_code(KC_BSPC); */ // used with timer less than. if button held right paren
                     return false;
                 }
-                break;        
+                break;
             }
     }
     return true;  // We didn't handle other keypresses                                
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-/* Keymap _00: (Base Layer) Default Layer x/y means x on tap, y on hold
+	
+/* Keymap _0: (Base Layer) Default Layer x/y means x on tap, y on hold
  * ,----------------------.
  * |Esc  |NL/LT2| CAL | DEL|
  * |-----|------|-----|----|
@@ -98,7 +94,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         LCTL_T(KC_P0),                  LT(1,KC_PDOT),  KC_PENT
     ),
 
-/* Keymap _01: (ALT Layer) Layer Accessed by holding dot
+	
+/* Keymap _1: (ALT Layer) Layer Accessed by holding dot
  * ,----------------------.
  * |Esc  |      |     |BSPC|
  * |-----|------|-----|----|
@@ -122,7 +119,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_INS,                         KC_NO,      KC_PSTE
     ),
 
-/* Keymap _02: (RGB Layer) Layer Accessed by holding Numlock
+	
+/* Keymap _2: (RGB Layer) Layer Accessed by holding Numlock
  * ,------------------------.
  * |RESET|      |speed|speed
  * |     |      | inc | dec |
